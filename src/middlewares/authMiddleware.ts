@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+import type { Request, Response, NextFunction } from "express";
+import { verify } from "jsonwebtoken";
 
 interface TokenPayload {
   id: string;
@@ -15,19 +15,19 @@ export function authMiddleware(
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ error: 'Token not provided' });
+    return res.status(401).json({ error: "Token not provided" });
   }
 
-  const [, token] = authHeader.split(' ');
+  const [, token] = authHeader.split(" ");
 
   try {
-    const decoded = verify(token, process.env.JWT_SECRET || 'default');
+    const decoded = verify(token, process.env.JWT_SECRET || "default");
     const { id } = decoded as TokenPayload;
 
     req.userId = id;
 
     return next();
   } catch {
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: "Invalid token" });
   }
 }

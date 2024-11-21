@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma";
 import { hash, compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { z } from "zod";
-import CryptoJS from "crypto-js";
+import { randomBytes } from "node:crypto";
 
 export class UserController {
   async register(req: Request, res: Response) {
@@ -24,8 +24,11 @@ export class UserController {
     }
 
     const hashedPassword = await hash(password, 10);
-    const keyPair = CryptoJS.lib.WordArray.random(32);
-    const publicKey = keyPair.toString();
+
+    // Gera 32 bytes aleatórios
+    const keyPair = randomBytes(32);
+    // Converte os bytes aleatórios para uma string hexadecimal
+    const publicKey = keyPair.toString("hex");
 
     const user = await prisma.user.create({
       data: {
